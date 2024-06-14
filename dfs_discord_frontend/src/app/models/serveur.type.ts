@@ -4,4 +4,7 @@ export declare type Serveur = {
   description: string;
   urlLogo: string;
   public: boolean;
+  blackList: string[]
 };
+
+

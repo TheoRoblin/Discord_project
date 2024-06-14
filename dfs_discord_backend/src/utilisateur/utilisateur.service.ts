@@ -3,12 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Utilisateur, UtilisateurDocument } from './utilisateur.schema';
 import * as bcrypt from 'bcrypt';
+import {Serveur, ServeurDocument} from "../serveur/serveur.schema";
 
 @Injectable()
 export class UtilisateurService {
   constructor(
-    @InjectModel(Utilisateur.name)
-    private utilisateurModel: Model<UtilisateurDocument>,
+    @InjectModel(Utilisateur.name) private utilisateurModel: Model<UtilisateurDocument>,
+    @InjectModel(Serveur.name) private serveurModel: Model<Serveur>
   ) {}
 
   async getByEmailAndClearPassword(
@@ -50,5 +51,13 @@ export class UtilisateurService {
     );
 
     return utilisateur;
+  }
+
+  async findAllUsersOfServer(serverId: string): Promise<Utilisateur[]> {
+    const utilisateurs = await this.utilisateurModel.find({
+      serveurs: serverId
+    });
+
+    return utilisateurs;
   }
 }

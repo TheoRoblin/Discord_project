@@ -4,7 +4,7 @@ import {
   Get,
   Post,
   UseGuards,
-  Request,
+  Request, Param, Put,
 } from '@nestjs/common';
 import { ServeurService } from './serveur.service';
 import { AuthGuard } from 'src/auth.guard';
@@ -16,9 +16,8 @@ export class ServeurController {
   @Get()
   @UseGuards(AuthGuard)
   findAll(@Request() requete) {
-    console.log(requete.user.sub);
-
-    return this.serveurService.findAllPublic();
+    const email = requete.user.sub
+    return this.serveurService.findAllPublic(email);
   }
 
   @Get('/possede')
@@ -27,8 +26,24 @@ export class ServeurController {
     return this.serveurService.findAllServerOfUser(requete.user.sub);
   }
 
+  @Put("block/:id")
+  @UseGuards(AuthGuard)
+  getBlockList(@Param("id" )serveurId: string , @Body() blockUser: any, @Request() request ){
+    const emailOwner = request.user.sub
+    console.log(blockUser.userId)
+    return this.serveurService.blockUser(blockUser.userId, serveurId, emailOwner)
+  }
+  @Put("unblock/:id")
+  @UseGuards(AuthGuard)
+  getUnblockList(@Param("id" )serveurId: string , @Body() blockUser: any, @Request() request ){
+    const emailOwner = request.user.sub
+    return this.serveurService.unblockUser(blockUser, serveurId, emailOwner)
+  }
+
   @Post()
-  async create(@Body() createServeurDto: any) {
-    return this.serveurService.create(createServeurDto);
+  @UseGuards(AuthGuard)
+  async create(@Body() createServeurDto: any, @Request() request) {
+    const email = request.user.sub;
+    return this.serveurService.create(createServeurDto, email);
   }
 }

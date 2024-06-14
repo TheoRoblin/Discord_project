@@ -16,6 +16,12 @@ export class Serveur {
 
   @Prop()
   public: boolean;
+
+  @Prop()
+  owner: string;
+
+  @Prop()
+  blackList: string[];
 }
 
 export const ServeurSchema = SchemaFactory.createForClass(Serveur);

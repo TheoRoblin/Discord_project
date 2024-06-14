@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Request, UseGuards} from '@nestjs/common';
 import { UtilisateurService } from './utilisateur.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/auth.guard';
+import {ServeurService} from "../serveur/serveur.service";
 
 @Controller()
 export class UtilisateurController {
@@ -20,6 +21,12 @@ export class UtilisateurController {
     //TODO : vérifier les donnée (regles mot de passe, email unique ...)
     console.log(createUtilisateurDto);
     return this.utilisateurService.create(createUtilisateurDto);
+  }
+
+  @Get('user/:id')
+  @UseGuards(AuthGuard)
+  async getServersOfUser(@Param("id") id:string) {
+    return this.utilisateurService.findAllUsersOfServer(id);
   }
 
   @Post('login')

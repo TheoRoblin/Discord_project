@@ -20,14 +20,17 @@ export class SalonController {
   }
 
   @Post()
-  async create(@Body() createServeurDto: any) {
-    console.log(createServeurDto)
-    return this.salonService.create(createServeurDto);
+  @UseGuards(AuthGuard)
+  async create(@Body() createServeurDto: any, @Request() request) {
+    const email = request.user.sub;
+    return this.salonService.create(createServeurDto, email);
   }
 
   @Get(':id')
-  async getSalonById(@Param('id') id: string){
-    return this.salonService.findAllSalonOfServeur(id);
+  @UseGuards(AuthGuard)
+  async getSalonById(@Param('id') id: string, @Request() request){
+    const email = request.user.sub;
+    return this.salonService.findAllSalonOfServeur(id, email);
   }
 
 }

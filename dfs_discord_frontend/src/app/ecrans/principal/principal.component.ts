@@ -16,12 +16,15 @@ import {MatDialog} from "@angular/material/dialog";
 import {ModalComponent} from "../../components/modal/modal.component";
 import {DatePipe} from "@angular/common";
 import {Observable, switchMap} from "rxjs";
+import {User} from "../../models/user.type";
+import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
+import {list} from "postcss";
 
 
 @Component({
   selector: 'app-principal',
   standalone: true,
-  imports: [MatIconModule, RouterLink, MatTooltipModule, MatInput, ReactiveFormsModule, MatButton, DatePipe],
+  imports: [MatIconModule, RouterLink, MatTooltipModule, MatInput, ReactiveFormsModule, MatButton, DatePipe, MatMenuTrigger, MatMenu],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.scss',
 })
@@ -33,6 +36,7 @@ export class PrincipalComponent {
   listeServeur: Serveur[] = [];
   listeSalon: Salon[] = []
   listeMessage: Message[] = [];
+  listeUser: User[]=[];
   selectedServeur: Serveur | null = null;
   selectedSalon: Salon | null = null
   snackBar: MatSnackBar = inject(MatSnackBar);
@@ -56,7 +60,7 @@ export class PrincipalComponent {
     if (jwt) {
       this.http
         .get<Serveur[]>('http://localhost:3000/serveur/possede')
-        .subscribe((listeServeur) => (this.listeServeur = listeServeur));
+        .subscribe((listeServeur) => console.log(this.listeServeur = listeServeur));
     }
   }
 
@@ -65,15 +69,19 @@ export class PrincipalComponent {
 
     if (jwt) {
       this.selectedServeur = serveur
+
       this.http.get<Salon[]>(`http://localhost:3000/salon/${serveur._id}`).subscribe((listeSalon) => (this.listeSalon = listeSalon))
+      this.http.get<User[]>(`http://localhost:3000/user/${serveur._id}`).subscribe((listeUser) => console.log(this.listeUser = listeUser))
     }
 
   }
 
   onSalon(salon: Salon) {
     this.selectedSalon = salon
+
     console.log("je suis dans le salon" + salon.nom)
     this.http.get<Message[]>(`http://localhost:3000/message/${this.selectedSalon?._id}`).subscribe((listeMessage) => console.log(this.listeMessage = listeMessage))
+
   }
 
   CreateMessage() {
@@ -111,4 +119,14 @@ export class PrincipalComponent {
       this.http.get<Salon[]>(`http://localhost:3000/salon/${this.selectedServeur?._id}`).subscribe((listeSalon) => (this.listeSalon = listeSalon))
     })
   }
+
+  userBlock( userId: string, serveurId?: string){
+    console.log(userId)
+    this.http.put(`http://localhost:3000/serveur/block/${serveurId}`, {userId}).subscribe((listUser) => (console.log(this.listeServeur)))
+  }
+
+  userUnblock(userId: string, serveurId?: string){
+    this.http.put(`http://localhost:3000/serveur/unblock/${serveurId}`, userId).subscribe((listUser) => (console.log(this.listeServeur)))
+  }
+
 }
