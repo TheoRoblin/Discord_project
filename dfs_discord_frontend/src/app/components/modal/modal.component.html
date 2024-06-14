@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>Création d'un salon</h2>
+<mat-dialog-content>
+  <form [formGroup]="formulaire" (ngSubmit)="onSend()" class="flex flex-col">
+
+    <mat-form-field>
+      <mat-label>Nom du salon</mat-label>
+      <input matInput formControlName="nom" placeholder="Ex. Nom de salon pas fou"/>
+    </mat-form-field>
+    <button mat-flat-button color="primary">Créer</button>
+  </form>
+</mat-dialog-content>
